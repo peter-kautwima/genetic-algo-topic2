@@ -106,7 +106,11 @@ def generate_landscape(filename, size=10, resolution=0.5, height_range=(3, 7), s
             sigma = random.uniform(*sigma_range)
             z = height * math.exp(-((x**2 + y**2) / (2 * sigma**2)))
             vertices.append([x, y, z])
-    # Add code to generate faces (omitted for brevity)
+            if i > 0 and j > 0:
+                # Add two faces (triangles) to form a square
+                idx = i * int(size / resolution) + j
+                faces.append([idx, idx - 1, idx - int(size / resolution)])
+                faces.append([idx - 1, idx - int(size / resolution) - 1, idx - int(size / resolution)])
     write_to_obj(filename, vertices, faces)
 
 # Function to generate a noisy landscape using Perlin noise
@@ -120,7 +124,11 @@ def generate_noisy_landscape(filename, size=10, resolution=0.5, sigma=3, height=
             z = gaussian(x, y, sigma) * height
             z += pnoise2(x * noise_scale, y * noise_scale) * noise_factor
             vertices.append([x, y, z])
-    # Add code to generate faces (omitted for brevity)
+            if i > 0 and j > 0:
+                # Add two faces (triangles) to form a square
+                idx = i * int(size / resolution) + j
+                faces.append([idx, idx - 1, idx - int(size / resolution)])
+                faces.append([idx - 1, idx - int(size / resolution) - 1, idx - int(size / resolution)])
     write_to_obj(filename, vertices, faces)
 
 # Function to determine if a point is outside the pyramid's base
@@ -129,16 +137,40 @@ def outside_pyramid(i, j, pyramid_size, resolution):
     y = -pyramid_size/2 + j * resolution
     return abs(x) > pyramid_size/2 or abs(y) > pyramid_size/2
 
-# Function to combine a pyramid shape with surrounding terrain
 def combine_shapes(filename, pyramid_size=5, terrain_size=10, resolution=0.5):
     vertices = []
     faces = []
-    # Generate a pyramid at the center (omitted for brevity)
-    # Generate surrounding terrain vertices and faces (omitted for brevity)
+
+    # Generate a pyramid at the center
+    vertices.extend([
+        [0, 0, pyramid_size/2],  # peak of the pyramid
+        [-pyramid_size/2, -pyramid_size/2, 0],  # base vertices
+        [pyramid_size/2, -pyramid_size/2, 0],
+        [pyramid_size/2, pyramid_size/2, 0],
+        [-pyramid_size/2, pyramid_size/2, 0]
+    ])
+    faces.extend([
+        [1, 2, 3],
+        [1, 3, 4],
+        [1, 4, 5],
+        [1, 5, 2],
+        [2, 3, 4, 5]  # base of the pyramid
+    ])
+
+    # Generate surrounding terrain vertices and faces
+    for i in range(-terrain_size, terrain_size + 1):
+        for j in range(-terrain_size, terrain_size + 1):
+            if abs(i) > pyramid_size/2 or abs(j) > pyramid_size/2:  # outside the pyramid
+                vertices.append([i, j, 0])  # all terrain vertices are at z=0
+    for i in range(terrain_size * 2):
+        for j in range(terrain_size * 2):
+            if max(abs(i - terrain_size), abs(j - terrain_size)) > pyramid_size/2:  # outside the pyramid
+                idx = len(vertices) - (terrain_size * 2 - i) * (terrain_size * 2) + j
+                faces.append([idx, idx + 1, idx + terrain_size * 2 + 1, idx + terrain_size * 2])
+
     write_to_obj(filename, vertices, faces)
+
 # Old functions 
-
-
 def gaussian(x, y, sigma):
     """Return the height of the shape at position (x, y) using a Gaussian function."""
     return math.exp(-((x**2 + y**2) / (2 * sigma**2)))
@@ -363,10 +395,22 @@ def generate_gaussian_pyramid4(filename, size=10, resolution=0.5, sigma=3, heigh
 # Generate the OBJ file
 generate_gaussian_pyramid4("./shapes/gaussian_pyramid.obj")
 
+# new as well
 
-# Example function calls - uncomment to generate landscapes
-# generate_landscape("landscape.obj")
-# generate_noisy_landscape("noisy_landscape.obj")
-# combine_shapes("combined_shapes.obj")
+# Generate a landscape with a height range of 2 to 6 and sigma range of 3 to 7
+generate_landscape("landscape1.obj", height_range=(2, 6), sigma_range=(3, 7))
 
-# End of New Functions
+# Generate a noisy landscape with a larger noise factor
+generate_noisy_landscape("noisy_landscape1.obj", noise_factor=0.7)
+
+# Generate a combined shape with a larger pyramid and terrain size
+combine_shapes("combined_shapes1.obj", pyramid_size=7, terrain_size=15)
+
+# Generate a landscape with a smaller resolution
+generate_landscape("landscape2.obj", resolution=0.3)
+
+# Generate a noisy landscape with a smaller noise scale
+generate_noisy_landscape("noisy_landscape2.obj", noise_scale=0.05)
+
+# Generate a combined shape with a smaller resolution
+combine_shapes("combined_shapes2.obj", resolution=0.3)
