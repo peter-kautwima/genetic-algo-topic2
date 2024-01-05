@@ -398,19 +398,19 @@ generate_gaussian_pyramid4("./shapes/gaussian_pyramid.obj")
 # new as well
 
 # Generate a landscape with a height range of 2 to 6 and sigma range of 3 to 7
-generate_landscape("landscape1.obj", height_range=(2, 6), sigma_range=(3, 7))
+generate_landscape("shapes/landscape1.obj", height_range=(2, 6), sigma_range=(3, 7))
 
 # Generate a noisy landscape with a larger noise factor
-generate_noisy_landscape("noisy_landscape1.obj", noise_factor=0.7)
+generate_noisy_landscape("shapes/noisy_landscape1.obj", noise_factor=0.7)
 
 # Generate a combined shape with a larger pyramid and terrain size
-combine_shapes("combined_shapes1.obj", pyramid_size=7, terrain_size=15)
+combine_shapes("shapes/combined_shapes1.obj", pyramid_size=7, terrain_size=15)
 
 # Generate a landscape with a smaller resolution
-generate_landscape("landscape2.obj", resolution=0.3)
+generate_landscape("shapes/landscape2.obj", resolution=0.3)
 
 # Generate a noisy landscape with a smaller noise scale
-generate_noisy_landscape("noisy_landscape2.obj", noise_scale=0.05)
+generate_noisy_landscape("shapes/noisy_landscape2.obj", noise_scale=0.05)
 
 # Generate a combined shape with a smaller resolution
-combine_shapes("combined_shapes2.obj", resolution=0.3)
+combine_shapes("shapes/combined_shapes2.obj", resolution=0.3)
