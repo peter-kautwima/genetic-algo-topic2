@@ -22,7 +22,7 @@ def main(csv_file):
 
     # generate a random creature
     cr = creature.Creature(gene_count=1)
-    dna = genome.Genome.from_csv(csv_file)
+    dna = genome.Genome.from_csv('elite_3.csv')
     cr.update_dna(dna)
     # save it to XML
     with open('test.urdf', 'w') as f:
