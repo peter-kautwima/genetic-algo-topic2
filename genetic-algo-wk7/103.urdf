@@ -28,7 +28,7 @@
     <!-- Define visual and collision properties for sub_link as needed -->
     <visual>
       <geometry>
-        <cylinder length="0.6" radius="0.25"/>
+        <cylinder length="1" radius="0.1"/>
       </geometry>
     </visual>
     <collision>
@@ -39,10 +39,10 @@
   </link>
 
   <!-- Joint connecting base_link to sub_link -->
-  <joint name="base_to_sub" type="revolute">
+  <joint name="base_to_sub" type="fixed">
     <parent link="base_link"/>
     <child link="sub_link"/>
-    <origin xyz="0 0 2.5" rpy="0 0 0"/> <!-- Adjust the xyz values as needed -->
+    <origin xyz="0 0.5 0" rpy="0 0 0"/> <!-- Adjust the xyz values as needed -->
     <axis xyz="1 0 0"/>
     <limit effort="10" upper="0" lower="10" velocity="10"/>
   </joint>
