@@ -3,7 +3,8 @@ import pybullet_data
 import time
 import numpy as np
 import random
-import creature
+from creature import Creature
+
 
 p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -13,7 +14,90 @@ import pybullet as p
 import math
 
 import pybullet as p
+import numpy as np
+import matplotlib.pyplot as plt
 
+class GeneticAlgorithm:
+    def __init__(self, population_size, mutation_rate, crossover_rate):
+        self.population_size = population_size
+        self.mutation_rate = mutation_rate
+        self.crossover_rate = crossover_rate
+        self.population = self.initialize_population()
+        self.best_fitnesses = []
+
+    def initialize_population(self):
+        # Initialize your population here
+        return [Creature() for _ in range(self.population_size)]
+
+    def run_generation(self):
+        # Evaluate fitness
+        fitness_scores = [self.fitness_function(creature) for creature in self.population]
+
+        # Keep track of the best fitness
+        self.best_fitnesses.append(max(fitness_scores))
+
+        # Select parents
+        parents = self.selection(fitness_scores)
+        # Perform crossover
+        offspring = self.crossover(parents)
+        # Perform mutation
+        self.population = self.mutation(offspring)
+
+        # Implement elitism: select the best individuals from the current population
+        sorted_population = [x for _, x in sorted(zip(fitness_scores, self.population), reverse=True)]
+        elites = sorted_population[:int(self.population_size * 0.1)]  # top 10%
+
+        # Create new generation: combine elites and offspring
+        self.population = elites + mutated_offspring[:len(self.population) - len(elites)]
+    
+        def selection(self, fitness_scores):
+        # Implement a selection method here, such as roulette wheel selection or tournament selection
+        # This is just a placeholder. Replace this with your actual code.
+        return np.random.choice(self.population, size=self.population_size, p=fitness_scores)
+
+        def selection(self, fitness_scores):
+            # Implement tournament selection
+            selected = []
+            for _ in range(self.population_size):
+                # Select individuals for the tournament
+                tournament = np.random.choice(self.population, size=self.tournament_size)
+                # Evaluate fitness for the tournament individuals
+                tournament_fitnesses = [self.fitness_function(creature) for creature in tournament]
+                # Select the best individual among the tournament
+                winner = np.argmax(tournament_fitnesses)
+                selected.append(tournament[winner])
+            return selected
+
+    def crossover(self, parents):
+        # Implement a crossover method here, such as single-point crossover or uniform crossover
+        # This is just a placeholder. Replace this with your actual code.
+        return parents
+
+    def mutation(self, offspring):
+        # Implement a mutation method here
+        # This is just a placeholder. Replace this with your actual code.
+        for creature in offspring:
+            if np.random.random() < self.mutation_rate:
+                creature.mutate()
+        return offspring
+
+    def fitness_function(self, creature):
+        # Calculate the fitness based on the creature's ability to climb the mountain
+        # This is just a placeholder. Replace this with your actual code.
+        return creature.climb_mountain()
+
+# Initialize the genetic algorithm
+ga = GeneticAlgorithm(population_size=100, mutation_rate=0.01, crossover_rate=0.7)
+
+# Run the genetic algorithm for a certain number of generations
+for i in range(100):
+    ga.run_generation()
+
+# Plot the best fitness over time
+plt.plot(ga.best_fitnesses)
+plt.xlabel('Generation')
+plt.ylabel('Best Fitness')
+plt.show()
 
 
 def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5):
