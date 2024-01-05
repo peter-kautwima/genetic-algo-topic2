@@ -1,5 +1,6 @@
 import pybullet as p
 from multiprocessing import Pool
+import threading
 
 class Simulation: 
     def __init__(self, sim_id=0):
