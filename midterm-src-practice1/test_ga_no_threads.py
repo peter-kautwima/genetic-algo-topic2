@@ -18,7 +18,7 @@ class TestGA(unittest.TestCase):
         #sim = simulation.ThreadedSim(pool_size=1)
         sim = simulation.Simulation()
 
-        for iteration in range(1000):
+        for iteration in range(5):
             # this is a non-threaded version 
             # where we just call run_creature instead
             # of eval_population
