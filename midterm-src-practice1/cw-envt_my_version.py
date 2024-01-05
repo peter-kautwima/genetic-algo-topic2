@@ -76,7 +76,7 @@ make_arena(arena_size=arena_size)
 
 #make_rocks(arena_size=arena_size)
 
-mountain_position = (0, 0, -1)  # Adjust as needed
+mountain_position = (10, 10, 1)  # Adjust as needed
 mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
 p.setAdditionalSearchPath('shapes/')
 # mountain = p.loadURDF("mountain.urdf", mountain_position, mountain_orientation, useFixedBase=1)
@@ -84,6 +84,8 @@ p.setAdditionalSearchPath('shapes/')
 
 mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
+# Load the landscape into your PyBullet environment
+landscape = p.loadURDF("mountain.urdf", useFixedBase=True)
 # generate a random creature
 cr = creature.Creature(gene_count=3)
 # save it to XML
