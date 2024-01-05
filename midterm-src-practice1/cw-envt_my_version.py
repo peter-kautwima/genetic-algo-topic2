@@ -84,6 +84,9 @@ p.setAdditionalSearchPath('shapes/')
 
 mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
+# works also load in the other ones now! see the prepareshapes
+mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+
 # Load the landscape into your PyBullet environment
 landscape = p.loadURDF("mountain.urdf", useFixedBase=True)
 # generate a random creature
