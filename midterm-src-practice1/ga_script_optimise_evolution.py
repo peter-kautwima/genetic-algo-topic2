@@ -18,6 +18,7 @@ def main():
 
     # Simulate the best creature
     subprocess.run(["python", "realtime_from_csv.py", best_csv_file], check=True)
+    return best_csv_file
 
 if __name__ == "__main__":
-    main()
+    print(main())
