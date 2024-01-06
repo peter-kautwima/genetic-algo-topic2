@@ -31,7 +31,7 @@ def main(csv_file):
 #   p.setRealTimeSimulation(1)
 
 
-    # generate a random creature
+    # generate a creature from the CSV file
     cr = creature.Creature(gene_count=1)
     dna = genome.Genome.from_csv(csv_file)
     cr.update_dna(dna)
@@ -86,6 +86,8 @@ def calculate_distances():
     """
     distances = {}
     for csv_file in glob.glob('*.csv'):
+        if csv_file == 'ga_output.csv':
+            continue
         distance = main(csv_file)
         distances[csv_file] = distance
     return distances
