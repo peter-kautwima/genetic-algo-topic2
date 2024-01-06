@@ -4,6 +4,7 @@ import time
 import numpy as np
 import random
 import creature
+import genome
 
 p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -86,6 +87,8 @@ mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orien
 
 # generate a random creature
 cr = creature.Creature(gene_count=3)
+dna = genome.Genome.from_csv('elite_0.csv')
+cr.update_dna(dna)
 # save it to XML
 with open('test.urdf', 'w') as f:
     f.write(cr.to_xml())
