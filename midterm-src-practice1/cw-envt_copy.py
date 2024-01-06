@@ -8,9 +8,15 @@ import genome
 import os 
 import sys
 import math
+import population
+import simulation 
+import numpy as np
+from population import Population
+from genome import Genome
+from creature import Creature
 
-def main(csv_file):
-    assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
+def main():
+    # assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
 
     p.connect(p.GUI)
     # not sure if I need th eone below. 
@@ -82,50 +88,62 @@ def main(csv_file):
 
     mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
-    # generate a random creature
-    cr = creature.Creature(gene_count=3)
-    dna = genome.Genome.from_csv(csv_file)
-    cr.update_dna(dna)
-    # save it to XML
-    with open('test.urdf', 'w') as f:
-        f.write(cr.to_xml())
-    # load it into the sim
-    rob1 = p.loadURDF('test.urdf', (7, 7, 1))
+    # # generate a random creature
+    # cr = creature.Creature(gene_count=3)
+    # dna = genome.Genome.from_csv(csv_file)
+    # cr.update_dna(dna)
+    # # save it to XML
+    # with open('test.urdf', 'w') as f:
+    #     f.write(cr.to_xml())
+    # # load it into the sim
+    # rob1 = p.loadURDF('test.urdf', (7, 7, 1))
 
-    start_pos, orn = p.getBasePositionAndOrientation(rob1)
+    # start_pos, orn = p.getBasePositionAndOrientation(rob1)
 
-    # iterate 
-    elapsed_time = 0
-    wait_time = 1.0/240 # seconds
-    total_time = 30 # seconds
-    step = 0
-    start_time = time.time()  # Record the start time of the loop
-    while elapsed_time < total_time:
-        loop_start_time = time.time()  # Record the start time of this iteration
-        p.stepSimulation()
-        step += 1
-        if step % 24 == 0:
-            motors = cr.get_motors()
-            assert len(motors) == p.getNumJoints(rob1), "Something went wrong"
-            for jid in range(p.getNumJoints(rob1)):
-                mode = p.VELOCITY_CONTROL
-                vel = motors[jid].get_output()
-                p.setJointMotorControl2(rob1, 
-                            jid,  
-                            controlMode=mode, 
-                            targetVelocity=vel)
-            new_pos, orn = p.getBasePositionAndOrientation(rob1)
-            #print(new_pos)
-            dist_moved = np.linalg.norm(np.asarray(start_pos) - np.asarray(new_pos))
-            print(dist_moved)
-        loop_end_time = time.time()  # Record the end time of this iteration
-        elapsed_time += loop_end_time - loop_start_time  # Add the time it took to execute this iteration
+    pop = population.Population(pop_size=10, gene_count=3)
+    sim = simulation.Simulation()
 
-    print("TOTAL DISTANCE MOVED:", dist_moved)
+    for iteration in range(5):
+        for cr in pop.creatures:
+            sim.run_creature(cr, 2400)            
+        fits = [cr.get_distance_travelled() for cr in pop.creatures]
+        links = [len(cr.get_expanded_links()) for cr in pop.creatures]
+        print(iteration, "fittest:", np.round(np.max(fits), 3), 
+            "mean:", np.round(np.mean(fits), 3), "mean links", np.round(np.mean(links)), "max links", np.round(np.max(links)))       
+        fit_map = population.Population.get_fitness_map(fits)
+        new_creatures = []
+        for i in range(len(pop.creatures)):
+            p1_ind = Population.select_parent(fit_map)
+            p2_ind = Population.select_parent(fit_map)
+            p1 = pop.creatures[p1_ind]
+            p2 = pop.creatures[p2_ind]
+            dna = Genome.crossover(p1.dna, p2.dna)
+            dna = Genome.point_mutate(dna, rate=0.1, amount=0.25)
+            dna = Genome.shrink_mutate(dna, rate=0.25)
+            dna = Genome.grow_mutate(dna, rate=0.1)
+            cr = Creature(1)
+            cr.update_dna(dna)
+            new_creatures.append(cr)
+        # elitism
+        max_fit = np.max(fits)
+        for cr in pop.creatures:
+            if cr.get_distance_travelled() == max_fit:
+                new_cr = Creature(1)
+                new_cr.update_dna(cr.dna)
+                new_creatures[0] = new_cr
+                filename = "elite_" + str(iteration) + ".csv"
+                try:
+                    Genome.to_csv(cr.dna, filename)
+                    print(f"CSV file created: {filename}")
+                except Exception as e:
+                    print(f"Error creating CSV file: {e}")
+                break
+        else:
+            print("No creature matched the max_fit condition.")
+
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 2, "Usage: python playback_test.py csv_filename"
-    main(sys.argv[1])
+    main()
 
 
 
