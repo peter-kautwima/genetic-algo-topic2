@@ -88,8 +88,14 @@ mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orien
 # Get the best CSV file from ga_script_optimise_evolution.py
 best_csv_file = get_best_csv()
 
-# Load the creature from the best CSV file
-cr = creature.Creature.from_csv(best_csv_file)
+# Generate a creature
+cr = creature.Creature(gene_count=1)
+
+# Load the DNA from the best CSV file
+dna = genome.Genome.from_csv(best_csv_file)
+
+# Update the creature's DNA
+cr.update_dna(dna)
 # save it to XML
 with open('test.urdf', 'w') as f:
     f.write(cr.to_xml())

@@ -62,6 +62,10 @@ def main(csv_file):
 
     print("TOTAL DISTANCE MOVED:", dist_moved)
 
+    # Disconnect from the physics server
+    p.disconnect()
+
+
 
 
 if __name__ == "__main__":
