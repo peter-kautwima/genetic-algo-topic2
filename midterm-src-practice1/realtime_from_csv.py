@@ -62,11 +62,6 @@ def main(csv_file):
 
     print("TOTAL DISTANCE MOVED:", dist_moved)
 
-    # Disconnect from the physics server
-    p.disconnect()
-
-
-
 
 if __name__ == "__main__":
     assert len(sys.argv) == 2, "Usage: python playback_test.py csv_filename"
