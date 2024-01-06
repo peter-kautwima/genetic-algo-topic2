@@ -92,6 +92,24 @@ def calculate_distances():
         distances[csv_file] = distance
     return distances
 
+def find_best_csv(distances):
+    """
+    This function finds the CSV file with the highest fitness.
+
+    Parameters:
+    distances (dict): A dictionary containing the distances for each CSV file.
+
+    Returns:
+    str: The name of the CSV file with the highest fitness.
+    """
+    max_distance = 0
+    best_csv_file = None
+    for csv_file, distance in distances.items():
+        if distance > max_distance:
+            max_distance = distance
+            best_csv_file = csv_file
+    return best_csv_file
+
 def plot_distances(distances):
     """
     This function plots a bar chart showing the distances traveled for each CSV file.
