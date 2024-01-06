@@ -5,17 +5,13 @@ import numpy as np
 import random
 import creature
 import genome
+import os 
+import sys
+import math
+
 
 p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
-
-import random
-import pybullet as p
-import math
-
-import pybullet as p
-
-
 
 def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5):
     def gaussian(x, y, sigma=arena_size/4):
@@ -35,7 +31,6 @@ def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5
         rock_shape = p.createCollisionShape(p.GEOM_BOX, halfExtents=[size, size, size])
         rock_visual = p.createVisualShape(p.GEOM_BOX, halfExtents=[size, size, size], rgbaColor=[0.5, 0.5, 0.5, 1])
         rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
-
 
 
 def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
@@ -69,9 +64,7 @@ def make_arena(arena_size=10, wall_height=1):
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[arena_size/2, 0, wall_height/2])
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[-arena_size/2, 0, wall_height/2])
 
-
 p.setGravity(0, 0, -10)
-
 arena_size = 20
 make_arena(arena_size=arena_size)
 
@@ -96,5 +89,5 @@ with open('test.urdf', 'w') as f:
 rob1 = p.loadURDF('test.urdf', (0, 0, 10))
 
 
-p.setRealTimeSimulation(1)
+# p.setRealTimeSimulation(1)
 
