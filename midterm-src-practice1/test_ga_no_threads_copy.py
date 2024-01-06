@@ -10,23 +10,6 @@ import simulation
 import genome 
 import creature 
 import numpy as np
-import pandas as pd
-
-import sys
-
-# Set a default value for ga_generations
-ga_generations = 5
-
-# Check if a value was passed as a command-line argument
-if len(sys.argv) > 1:
-    try:
-        # Try to convert the first command-line argument to an integer
-        ga_generations = int(sys.argv[1])
-    except ValueError:
-        # If the conversion fails, print an error message and exit
-        print(f"Error: Expected an integer, got {sys.argv[1]}")
-        sys.exit(1)
-
 
 class TestGA(unittest.TestCase):
     def testBasicGA(self):
@@ -35,10 +18,7 @@ class TestGA(unittest.TestCase):
         #sim = simulation.ThreadedSim(pool_size=1)
         sim = simulation.Simulation()
 
-        # Initialize an empty list to store the data for each generation
-        data = []
-
-        for iteration in range(ga_generations):
+        for iteration in range(1000):
             # this is a non-threaded version 
             # where we just call run_creature instead
             # of eval_population
@@ -78,24 +58,6 @@ class TestGA(unittest.TestCase):
                     break
             
             pop.creatures = new_creatures
-
-            # Store the data for this generation in a dictionary
-            generation_data = {
-                "iteration": iteration,
-                "fittest": np.round(np.max(fits), 3),
-                "mean": np.round(np.mean(fits), 3),
-                "mean links": np.round(np.mean(links)),
-                "max links": np.round(np.max(links))
-            }
-    
-            # Add the dictionary to the list
-            data.append(generation_data)
-
-        # Convert the list of dictionaries to a DataFrame
-        df = pd.DataFrame(data)
-
-        # Save the DataFrame to a CSV file
-        df.to_csv("ga_output.csv", index=False)
                             
         self.assertNotEqual(fits[0], 0)
 
