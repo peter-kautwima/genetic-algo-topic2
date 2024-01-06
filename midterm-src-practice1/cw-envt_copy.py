@@ -11,6 +11,8 @@ import math
 
 
 p.connect(p.GUI)
+# not sure if I need th eone below. 
+p.setPhysicsEngineParameter(enableFileCaching=0)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
 def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5):
@@ -86,7 +88,7 @@ cr.update_dna(dna)
 with open('test.urdf', 'w') as f:
     f.write(cr.to_xml())
 # load it into the sim
-rob1 = p.loadURDF('test.urdf', (0, 0, 10))
+rob1 = p.loadURDF('test.urdf', (7, 7, 0.5))
 
 
 # p.setRealTimeSimulation(1)
