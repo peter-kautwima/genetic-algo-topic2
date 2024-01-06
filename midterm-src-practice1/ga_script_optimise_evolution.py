@@ -6,7 +6,7 @@ from offline_csv_my_version import calculate_distances, find_best_csv
 
 def main():
     # Run the genetic algorithm
-    subprocess.run(["python", "test_ga_no_threads.py"], check=True)
+    subprocess.run(["python", "test_ga_no_threads_keeps_value_elites.py"], check=True)
 
     # Process all CSV files with offline_csv_my_version.py
     for csv_file in glob.glob('*.csv'):
