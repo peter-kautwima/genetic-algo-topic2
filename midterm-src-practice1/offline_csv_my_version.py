@@ -123,4 +123,6 @@ def plot_distances(distances):
     plt.show()
 
 distances = calculate_distances()
+best_csv_file = find_best_csv(distances)
 plot_distances(distances)
+print("The CSV file with the highest fitness is:", best_csv_file)
