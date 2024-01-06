@@ -13,6 +13,7 @@ import pybullet as p
 import math
 
 import pybullet as p
+from ga_script_optimise_evolution import main as get_best_csv
 
 
 
@@ -84,8 +85,17 @@ p.setAdditionalSearchPath('shapes/')
 
 mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
-# generate a random creature
-cr = creature.Creature(gene_count=3)
+# Get the best CSV file from ga_script_optimise_evolution.py
+best_csv_file = get_best_csv()
+
+# Generate a creature
+cr = creature.Creature(gene_count=1)
+
+# Load the DNA from the best CSV file
+dna = genome.Genome.from_csv(best_csv_file)
+
+# Update the creature's DNA
+cr.update_dna(dna)
 # save it to XML
 with open('test.urdf', 'w') as f:
     f.write(cr.to_xml())
