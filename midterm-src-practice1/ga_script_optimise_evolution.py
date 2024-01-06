@@ -1,19 +1,17 @@
 import os
 import glob
-import test_ga_no_threads
-import offline_csv_my_version
-import realtime_from_csv
+import subprocess
 
-def main(ga_generations, ga_output_path, best_dna_path):
+def main(ga_output_path, best_dna_path):
     # Run the genetic algorithm
-    test_ga_no_threads.run(ga_generations, ga_output_path)
+    subprocess.run(["python", "test_ga_no_threads.py"], check=True)
 
     # Select the best DNA
     for csv_file in glob.glob('*.csv'):
-        offline_csv_my_version.run(csv_file)
+        subprocess.run(["python", "offline_csv_my_version.py", csv_file], check=True)
 
     # Simulate the best creature
-    realtime_from_csv.run(best_dna_path)
+    subprocess.run(["python", "realtime_from_csv.py", best_dna_path], check=True)
 
 if __name__ == "__main__":
-    main(5, 'ga_output.csv', 'best_dna.csv')
+    main('ga_output.csv', 'best_dna.csv')
