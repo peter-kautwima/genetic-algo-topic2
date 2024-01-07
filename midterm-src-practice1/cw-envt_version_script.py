@@ -100,7 +100,7 @@ cr.update_dna(dna)
 with open('test.urdf', 'w') as f:
     f.write(cr.to_xml())
 # load it into the sim
-rob1 = p.loadURDF('test.urdf', (0, 0, 10))
+rob1 = p.loadURDF('test.urdf', (7, 7, 1))
 
 
 p.setRealTimeSimulation(1)

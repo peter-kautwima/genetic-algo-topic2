@@ -27,7 +27,7 @@ class GeneticAlgorithm:
 
     def initialize_population(self):
         # Initialize your population here
-        return [Creature() for _ in range(self.population_size)]
+        return [Creature(gene_count=3) for _ in range(self.population_size)]
 
     def run_generation(self):
         # Evaluate fitness
@@ -53,7 +53,7 @@ class GeneticAlgorithm:
         def selection(self, fitness_scores):
         # Implement a selection method here, such as roulette wheel selection or tournament selection
         # This is just a placeholder. Replace this with your actual code.
-        return np.random.choice(self.population, size=self.population_size, p=fitness_scores)
+            return np.random.choice(self.population, size=self.population_size, p=fitness_scores)
 
         def selection(self, fitness_scores):
             # Implement tournament selection
