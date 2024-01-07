@@ -38,12 +38,18 @@ class TestGA(unittest.TestCase):
         # Initialize an empty list to store the data for each generation
         data = []
 
+      
+
         for iteration in range(ga_generations):
+            # Initialize an empty list to store the total vertical distances travelled
+            total_vertical_distances = []
             # this is a non-threaded version 
             # where we just call run_creature instead
             # of eval_population
             for cr in pop.creatures:
-                sim.run_creature(cr, 2400)            
+                sim.run_creature(cr, 2400)     
+                # Append the total vertical distance travelled by the current creature
+                total_vertical_distances.append(cr.get_total_vertical_distance_travelled())       
             #sim.eval_population(pop, 2400)
             fits = [cr.get_total_vertical_distance_travelled() for cr in pop.creatures]
             links = [len(cr.get_expanded_links()) 
@@ -85,7 +91,8 @@ class TestGA(unittest.TestCase):
                 "mean": np.round(np.mean(fits), 3),
                 "mean links": np.round(np.mean(links)),
                 "max links": np.round(np.max(links)),
-                "get_total_vertical_distance_travelled": cr.get_total_vertical_distance_travelled()
+                "max vertical distance": np.round(np.max(total_vertical_distances), 3),
+                "mean vertical distance": np.round(np.mean(total_vertical_distances), 3),
             }
     
             # Add the dictionary to the list
