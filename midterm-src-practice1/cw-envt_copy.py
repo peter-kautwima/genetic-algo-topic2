@@ -10,10 +10,11 @@ import sys
 import math
 import population
 import simulation 
-import numpy as np
 from population import Population
 from genome import Genome
 from creature import Creature
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def main():
     # assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
@@ -102,6 +103,8 @@ def main():
 
     pop = population.Population(pop_size=10, gene_count=3)
     sim = simulation.Simulation()
+    # Initialize new_data before your main loop
+    new_data = []
 
     for iteration in range(5):
         for cr in pop.creatures:
@@ -109,7 +112,19 @@ def main():
         fits = [cr.get_distance_travelled() for cr in pop.creatures]
         links = [len(cr.get_expanded_links()) for cr in pop.creatures]
         print(iteration, "fittest:", np.round(np.max(fits), 3), 
-            "mean:", np.round(np.mean(fits), 3), "mean links", np.round(np.mean(links)), "max links", np.round(np.max(links)))       
+            "mean:", np.round(np.mean(fits), 3), "mean links", np.round(np.mean(links)), "max links", np.round(np.max(links))) 
+        # Store the data for this generation in a dictionary
+        generation_data = {
+            "iteration": iteration,
+            "fittest": np.round(np.max(fits), 3),
+            "mean": np.round(np.mean(fits), 3),
+            "mean links": np.round(np.mean(links)),
+            "max links": np.round(np.max(links))
+        }
+
+        # Add the dictionary to the new list
+        new_data.append(generation_data)
+      
         fit_map = population.Population.get_fitness_map(fits)
         new_creatures = []
         for i in range(len(pop.creatures)):
@@ -140,6 +155,21 @@ def main():
                 break
         else:
             print("No creature matched the max_fit condition.")
+    # At the end of your script, outside the loop
+    # Convert the new list of dictionaries to a DataFrame
+    new_df = pd.DataFrame(new_data)
+
+    # Save the new DataFrame to a CSV file with a different name
+    new_df.to_csv("new_ga_output.csv", index=False)
+
+    # Plotting the graph
+    plt.figure(figsize=(10, 6))
+    plt.plot(new_df['iteration'], new_df['fittest'])
+    plt.xlabel('Iteration')
+    plt.ylabel('Fittest')
+    plt.title('Fittest value over iterations')
+    plt.grid(True)
+    plt.show()
 
 
 if __name__ == "__main__":
