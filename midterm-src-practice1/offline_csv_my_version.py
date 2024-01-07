@@ -158,7 +158,7 @@ def calculate_distances():
     """
     distances = {}
     for csv_file in glob.glob('*.csv'):
-        if csv_file == 'ga_output.csv':
+        if csv_file in ['ga_output.csv', 'summary.csv']:
             continue
         distance = main(csv_file)
         distances[csv_file] = distance
