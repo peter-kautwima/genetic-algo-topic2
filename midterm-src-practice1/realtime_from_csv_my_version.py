@@ -98,7 +98,7 @@ def main(csv_file):
    
     # generate a random creature
     cr = creature.Creature(gene_count=1)
-    dna = genome.Genome.from_csv('elite_3.csv')
+    dna = genome.Genome.from_csv(csv_file)
     cr.update_dna(dna)
     # save it to XML
     with open('test.urdf', 'w') as f:
@@ -106,13 +106,13 @@ def main(csv_file):
     # load it into the sim
     rob1 = p.loadURDF('test.urdf')
     # air drop it
-    p.resetBasePositionAndOrientation(rob1, [0, 0, 2.5], [0, 0, 0, 1])
+    p.resetBasePositionAndOrientation(rob1, [-7, -7, 1], [0, 0, 0, 1])
     start_pos, orn = p.getBasePositionAndOrientation(rob1)
 
     # iterate 
     elapsed_time = 0
     wait_time = 1.0/240 # seconds
-    total_time = 30 # seconds
+    total_time = 10 # seconds
     step = 0
     while True:
         p.stepSimulation()
