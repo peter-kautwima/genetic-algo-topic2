@@ -45,8 +45,7 @@ class TestGA(unittest.TestCase):
             for cr in pop.creatures:
                 sim.run_creature(cr, 2400)            
             #sim.eval_population(pop, 2400)
-            fits = [cr.get_distance_travelled() 
-                    for cr in pop.creatures]
+            fits = [cr.get_total_vertical_distance_travelled() for cr in pop.creatures]
             links = [len(cr.get_expanded_links()) 
                     for cr in pop.creatures]
             print(iteration, "fittest:", np.round(np.max(fits), 3), 
@@ -69,7 +68,7 @@ class TestGA(unittest.TestCase):
             # elitism
             max_fit = np.max(fits)
             for cr in pop.creatures:
-                if cr.get_distance_travelled() == max_fit:
+                if cr.get_total_vertical_distance_travelled() == max_fit:
                     new_cr = creature.Creature(1)
                     new_cr.update_dna(cr.dna)
                     new_creatures[0] = new_cr
@@ -85,7 +84,8 @@ class TestGA(unittest.TestCase):
                 "fittest": np.round(np.max(fits), 3),
                 "mean": np.round(np.mean(fits), 3),
                 "mean links": np.round(np.mean(links)),
-                "max links": np.round(np.max(links))
+                "max links": np.round(np.max(links)),
+                "get_total_vertical_distance_travelled": cr.get_total_vertical_distance_travelled()
             }
     
             # Add the dictionary to the list

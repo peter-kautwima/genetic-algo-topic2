@@ -31,9 +31,7 @@ class Simulation:
                 self.update_motors(cid=cid, cr=cr)
 
             pos, orn = p.getBasePositionAndOrientation(cid, physicsClientId=pid)
-            cr.update_position(pos)
-            #print(pos[2])
-            #print(cr.get_distance_travelled())
+            cr.update_position(pos)  # Update the creature's position
         
     
     def update_motors(self, cid, cr):

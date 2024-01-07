@@ -40,6 +40,7 @@ class Creature:
         self.motors = None
         self.start_position = None
         self.last_position = None
+        self.positions = []
 
     def get_flat_links(self):
         if self.flat_links == None:
@@ -92,6 +93,7 @@ class Creature:
             self.start_position = pos
         else:
             self.last_position = pos
+        self.positions.append(pos)  # Add the current position to the positions list
 
     def get_distance_travelled(self):
         if self.start_position is None or self.last_position is None:
@@ -100,6 +102,16 @@ class Creature:
         p2 = np.asarray(self.last_position)
         dist = np.linalg.norm(p1-p2)
         return dist 
+    
+    def get_total_vertical_distance_travelled(self):
+        total_vertical_distance = 0
+        for i in range(1, len(self.positions)):
+            p1 = np.asarray(self.positions[i-1])
+            p2 = np.asarray(self.positions[i])
+            vertical_distance = p2[2] - p1[2]  # Calculate the vertical distance between two positions
+            if vertical_distance > 0:  # Only add to the total if the creature moved upwards
+                total_vertical_distance += vertical_distance
+        return total_vertical_distance
 
     def update_dna(self, dna):
         self.dna = dna
