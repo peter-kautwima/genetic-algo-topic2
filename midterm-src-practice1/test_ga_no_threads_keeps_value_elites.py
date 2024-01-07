@@ -15,7 +15,7 @@ import pandas as pd
 import sys
 
 # Set a default value for ga_generations
-ga_generations = 5
+ga_generations = 50
 
 # Check if a value was passed as a command-line argument
 if len(sys.argv) > 1:
@@ -37,8 +37,6 @@ class TestGA(unittest.TestCase):
 
         # Initialize an empty list to store the data for each generation
         data = []
-
-      
 
         for iteration in range(ga_generations):
             # Initialize an empty list to store the total vertical distances travelled

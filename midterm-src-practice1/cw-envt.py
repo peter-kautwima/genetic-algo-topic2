@@ -13,6 +13,7 @@ import pybullet as p
 import math
 
 import pybullet as p
+import genome
 
 
 
@@ -86,6 +87,12 @@ mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orien
 
 # generate a random creature
 cr = creature.Creature(gene_count=3)
+# Load the DNA from the best CSV file
+# dna = genome.Genome.from_csv('elite_49.csv')
+dna = genome.Genome.from_csv('elite_49.csv')
+
+# Update the creature's DNA
+cr.update_dna(dna)
 # save it to XML
 with open('test.urdf', 'w') as f:
     f.write(cr.to_xml())
