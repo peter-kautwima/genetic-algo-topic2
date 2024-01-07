@@ -64,7 +64,7 @@ def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
         rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
 
 
-def main(csv_file):
+def main(csv_files):
     """
     This function performs some operations on the given CSV file.
     It calculates the total distance moved and returns it.
@@ -75,126 +75,81 @@ def main(csv_file):
     Returns:
     float: The total distance moved.
     """
-    assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
+    for csv_file in csv_files:
+        assert os.path.exists(csv_file), f"Tried to load csv_file but it does not exist"
+        # rest of your code here
+        print(f"Processed {csv_file}")
 
-    p.connect(p.DIRECT)
-    p.setPhysicsEngineParameter(enableFileCaching=0)
-    p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
-    plane_shape = p.createCollisionShape(p.GEOM_PLANE)
-    floor = p.createMultiBody(plane_shape, plane_shape)
-    p.setGravity(0, 0, -10)
-#   p.setRealTimeSimulation(1)
+        p.connect(p.DIRECT)
+        p.setPhysicsEngineParameter(enableFileCaching=0)
+        p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
+        plane_shape = p.createCollisionShape(p.GEOM_PLANE)
+        floor = p.createMultiBody(plane_shape, plane_shape)
+        p.setGravity(0, 0, -10)
+    #   p.setRealTimeSimulation(1)
 
-    # Create the arena
-    arena_size = 20
-    make_arena(arena_size=arena_size)
+        # Create the arena
+        arena_size = 20
+        make_arena(arena_size=arena_size)
 
-    #make_rocks(arena_size=arena_size)
-    mountain_position = (10, 10, 1)  # Adjust as needed
-    mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
-    p.setAdditionalSearchPath('shapes/')
+        #make_rocks(arena_size=arena_size)
+        mountain_position = (10, 10, 1)  # Adjust as needed
+        mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
+        p.setAdditionalSearchPath('shapes/')
 
-    mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+        mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
-    # works also load in the other ones now! see the prepareshapes
-    mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+        # works also load in the other ones now! see the prepareshapes
+        mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
-    # Load the landscape into your PyBullet environment
-    landscape = p.loadURDF("mountain.urdf", useFixedBase=True)
+        # Load the landscape into your PyBullet environment
+        landscape = p.loadURDF("mountain.urdf", useFixedBase=True)
 
 
-    # generate a creature from the CSV file
-    cr = creature.Creature(gene_count=1)
-    dna = genome.Genome.from_csv(csv_file)
-    cr.update_dna(dna)
-    # save it to XML
-    with open('test.urdf', 'w') as f:
-        f.write(cr.to_xml())
-    # load it into the sim
-    rob1 = p.loadURDF('test.urdf')
-    # air drop it
-    p.resetBasePositionAndOrientation(rob1, [-7, -7, 1], [0, 0, 0, 1])
+        # generate a creature from the CSV file
+        cr = creature.Creature(gene_count=1)
+        dna = genome.Genome.from_csv(csv_file)
+        cr.update_dna(dna)
+        # save it to XML
+        with open('test.urdf', 'w') as f:
+            f.write(cr.to_xml())
+        # load it into the sim
+        rob1 = p.loadURDF('test.urdf')
+        # air drop it
+        p.resetBasePositionAndOrientation(rob1, [-7, -7, 1], [0, 0, 0, 1])
 
-    start_pos, orn = p.getBasePositionAndOrientation(rob1)
+        start_pos, orn = p.getBasePositionAndOrientation(rob1)
 
-    # iterate 
-    elapsed_time = 0
-    wait_time = 1.0/240 # seconds
-    total_time = 3 # seconds
-    step = 0
-    dist_moved = 0
-    while True:
-        p.stepSimulation()
-        step += 1
-        if step % 24 == 0:
-            motors = cr.get_motors()
-            assert len(motors) == p.getNumJoints(rob1), "Something went wrong"
-            for jid in range(p.getNumJoints(rob1)):
-                mode = p.VELOCITY_CONTROL
-                vel = motors[jid].get_output()
-                p.setJointMotorControl2(rob1, 
-                            jid,  
-                            controlMode=mode, 
-                            targetVelocity=vel)
-            new_pos, orn = p.getBasePositionAndOrientation(rob1)
-            #print(new_pos)
-            dist_moved = np.linalg.norm(np.asarray(start_pos) - np.asarray(new_pos))
-            print(dist_moved)
-        #time.sleep(wait_time)
-        elapsed_time += wait_time
-        if elapsed_time > total_time:
-            break
+        # iterate 
+        elapsed_time = 0
+        wait_time = 1.0/240 # seconds
+        total_time = 3 # seconds
+        step = 0
+        dist_moved = 0
+        while True:
+            p.stepSimulation()
+            step += 1
+            if step % 24 == 0:
+                motors = cr.get_motors()
+                assert len(motors) == p.getNumJoints(rob1), "Something went wrong"
+                for jid in range(p.getNumJoints(rob1)):
+                    mode = p.VELOCITY_CONTROL
+                    vel = motors[jid].get_output()
+                    p.setJointMotorControl2(rob1, 
+                                jid,  
+                                controlMode=mode, 
+                                targetVelocity=vel)
+                new_pos, orn = p.getBasePositionAndOrientation(rob1)
+                #print(new_pos)
+                dist_moved = np.linalg.norm(np.asarray(start_pos) - np.asarray(new_pos))
+                print(dist_moved)
+            #time.sleep(wait_time)
+            elapsed_time += wait_time
+            if elapsed_time > total_time:
+                break
 
-    print("TOTAL DISTANCE MOVED:", dist_moved)
-    return dist_moved
+        print("TOTAL DISTANCE MOVED:", dist_moved)
+        return dist_moved
 
-def calculate_distances():
-    """
-    This function calculates the distances for all CSV files in the current directory.
-    It calls the main function for each CSV file and stores the distances in a dictionary.
-
-    Returns:
-    dict: A dictionary containing the distances for each CSV file.
-    """
-    distances = {}
-    for csv_file in glob.glob('*.csv'):
-        if csv_file in ['ga_output.csv', 'summary.csv']:
-            continue
-        distance = main(csv_file)
-        distances[csv_file] = distance
-    return distances
-
-def find_best_csv(distances):
-    """
-    This function finds the CSV file with the highest fitness.
-
-    Parameters:
-    distances (dict): A dictionary containing the distances for each CSV file.
-
-    Returns:
-    str: The name of the CSV file with the highest fitness.
-    """
-    max_distance = 0
-    best_csv_file = None
-    for csv_file, distance in distances.items():
-        if distance > max_distance:
-            max_distance = distance
-            best_csv_file = csv_file
-    return best_csv_file
-
-def plot_distances(distances):
-    """
-    This function plots a bar chart showing the distances traveled for each CSV file.
-
-    Parameters:
-    distances (dict): A dictionary containing the distances for each CSV file.
-    """
-    plt.bar(distances.keys(), distances.values())
-    plt.xlabel('CSV File')
-    plt.ylabel('Total Distance Traveled')
-    plt.show()
-
-distances = calculate_distances()
-best_csv_file = find_best_csv(distances)
-plot_distances(distances)
-print("The CSV file with the highest fitness is:", best_csv_file)
+if __name__ == "__main__":
+    main(sys.argv[1:]) 

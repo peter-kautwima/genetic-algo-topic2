@@ -142,57 +142,7 @@ def main(csv_file, connection_mode):
     p.disconnect()
     return dist_moved  # Add this line
 
-def calculate_distances():
-    """
-    This function calculates the distances for all CSV files in the current directory.
-    It calls the main function for each CSV file and stores the distances in a dictionary.
-
-    Returns:
-    dict: A dictionary containing the distances for each CSV file.
-    """
-    distances = {}
-    for csv_file in glob.glob('*.csv'):
-        if csv_file == 'ga_output.csv' or csv_file == 'summary.csv':
-            continue
-        distance = main(csv_file, p.DIRECT)  # Use DIRECT mode
-        distances[csv_file] = distance
-    return distances
-
-def find_best_csv(distances):
-    """
-    This function finds the CSV file with the highest fitness.
-
-    Parameters:
-    distances (dict): A dictionary containing the distances for each CSV file.
-
-    Returns:
-    str: The name of the CSV file with the highest fitness.
-    """
-    max_distance = 0
-    best_csv_file_real = None
-    for csv_file, distance in distances.items():
-        if distance > max_distance:
-            max_distance = distance
-            best_csv_file_real = csv_file
-    return best_csv_file_real
-
-def plot_distances(distances):
-    """
-    This function plots a bar chart showing the distances traveled for each CSV file.
-
-    Parameters:
-    distances (dict): A dictionary containing the distances for each CSV file.
-    """
-    plt.bar(distances.keys(), distances.values())
-    plt.xlabel('CSV File')
-    plt.ylabel('Total Distance Traveled')
-    plt.show()
 
 if __name__ == "__main__":
     assert len(sys.argv) == 2, "Usage: python playback_test.py csv_filename"
     main(sys.argv[1], p.GUI)  # Use GUI mode
-    distances = calculate_distances()
-    best_csv_file_real = find_best_csv(distances)
-    plot_distances(distances)
-    print("The CSV file with the highest fitness is:", best_csv_file_real)
-
