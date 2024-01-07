@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 # Create an empty DataFrame to store all data
 all_data = pd.DataFrame()
 
-# Loop over all CSV files
-for csv_file in glob.glob('*.csv'):
+# Loop over all CSV files, sorted in ascending order by filename
+for csv_file in sorted(glob.glob('*.csv')):
     if csv_file == 'ga_output.csv':
         continue  # Ignore ga_output.csv file
 
