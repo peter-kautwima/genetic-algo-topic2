@@ -8,7 +8,8 @@ import random
 import numpy as np
 import pybullet_data
 import math
-
+import glob
+import matplotlib.pyplot as plt
 ## ... usual starter code to create a sim and floor
 
 
@@ -67,11 +68,11 @@ def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
         rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
 
 
-def main(csv_file):
+def main(csv_file, connection_mode):
     assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
 
     # ... existing code before creating creatures ...
-    p.connect(p.GUI)
+    physicsClient = p.connect(connection_mode)
     p.setPhysicsEngineParameter(enableFileCaching=0)
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
     plane_shape = p.createCollisionShape(p.GEOM_PLANE)
@@ -112,8 +113,9 @@ def main(csv_file):
     # iterate 
     elapsed_time = 0
     wait_time = 1.0/240 # seconds
-    total_time = 10 # seconds
+    total_time = 2 # seconds
     step = 0
+    dist_moved = 0
     while True:
         p.stepSimulation()
         step += 1
@@ -137,7 +139,60 @@ def main(csv_file):
             break
 
     print("TOTAL DISTANCE MOVED:", dist_moved)
+    p.disconnect()
+    return dist_moved  # Add this line
+
+def calculate_distances():
+    """
+    This function calculates the distances for all CSV files in the current directory.
+    It calls the main function for each CSV file and stores the distances in a dictionary.
+
+    Returns:
+    dict: A dictionary containing the distances for each CSV file.
+    """
+    distances = {}
+    for csv_file in glob.glob('*.csv'):
+        if csv_file == 'ga_output.csv':
+            continue
+        distance = main(csv_file, p.DIRECT)  # Use DIRECT mode
+        distances[csv_file] = distance
+    return distances
+
+def find_best_csv(distances):
+    """
+    This function finds the CSV file with the highest fitness.
+
+    Parameters:
+    distances (dict): A dictionary containing the distances for each CSV file.
+
+    Returns:
+    str: The name of the CSV file with the highest fitness.
+    """
+    max_distance = 0
+    best_csv_file_real = None
+    for csv_file, distance in distances.items():
+        if distance > max_distance:
+            max_distance = distance
+            best_csv_file_real = csv_file
+    return best_csv_file_real
+
+def plot_distances(distances):
+    """
+    This function plots a bar chart showing the distances traveled for each CSV file.
+
+    Parameters:
+    distances (dict): A dictionary containing the distances for each CSV file.
+    """
+    plt.bar(distances.keys(), distances.values())
+    plt.xlabel('CSV File')
+    plt.ylabel('Total Distance Traveled')
+    plt.show()
 
 if __name__ == "__main__":
     assert len(sys.argv) == 2, "Usage: python playback_test.py csv_filename"
-    main(sys.argv[1])
+    main(sys.argv[1], p.GUI)  # Use GUI mode
+    distances = calculate_distances()
+    best_csv_file_real = find_best_csv(distances)
+    plot_distances(distances)
+    print("The CSV file with the highest fitness is:", best_csv_file_real)
+
