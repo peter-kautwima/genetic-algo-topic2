@@ -120,7 +120,7 @@ def main(csv_file):
     # iterate 
     elapsed_time = 0
     wait_time = 1.0/240 # seconds
-    total_time = 30 # seconds
+    total_time = 3 # seconds
     step = 0
     dist_moved = 0
     while True:
