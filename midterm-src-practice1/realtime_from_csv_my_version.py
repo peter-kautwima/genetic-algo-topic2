@@ -6,6 +6,8 @@ import pybullet as p
 import time 
 import random
 import numpy as np
+import pybullet_data
+import math
 
 ## ... usual starter code to create a sim and floor
 
@@ -31,6 +33,40 @@ def make_arena(arena_size=10, wall_height=1):
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[arena_size/2, 0, wall_height/2])
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[-arena_size/2, 0, wall_height/2])
 
+def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5):
+    def gaussian(x, y, sigma=arena_size/4):
+        """Return the height of the mountain at position (x, y) using a Gaussian function."""
+        return mountain_height * math.exp(-((x**2 + y**2) / (2 * sigma**2)))
+
+    for _ in range(num_rocks):
+        x = random.uniform(-1 * arena_size/2, arena_size/2)
+        y = random.uniform(-1 * arena_size/2, arena_size/2)
+        z = gaussian(x, y)  # Height determined by the Gaussian function
+
+        # Adjust the size of the rocks based on height. Higher rocks (closer to the peak) will be smaller.
+        size_factor = 1 - (z / mountain_height)
+        size = random.uniform(0.1, max_size) * size_factor
+
+        orientation = p.getQuaternionFromEuler([random.uniform(0, 3.14), random.uniform(0, 3.14), random.uniform(0, 3.14)])
+        rock_shape = p.createCollisionShape(p.GEOM_BOX, halfExtents=[size, size, size])
+        rock_visual = p.createVisualShape(p.GEOM_BOX, halfExtents=[size, size, size], rgbaColor=[0.5, 0.5, 0.5, 1])
+        rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
+
+
+
+
+def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
+    for _ in range(num_rocks):
+        x = random.uniform(-1 * arena_size/2, arena_size/2)
+        y = random.uniform(-1 * arena_size/2, arena_size/2)
+        z = 0.5  # Adjust based on your needs
+        size = random.uniform(0.1,max_size)
+        orientation = p.getQuaternionFromEuler([random.uniform(0, 3.14), random.uniform(0, 3.14), random.uniform(0, 3.14)])
+        rock_shape = p.createCollisionShape(p.GEOM_BOX, halfExtents=[size, size, size])
+        rock_visual = p.createVisualShape(p.GEOM_BOX, halfExtents=[size, size, size], rgbaColor=[0.5, 0.5, 0.5, 1])
+        rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
+
+
 def main(csv_file):
     assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
 
@@ -45,6 +81,19 @@ def main(csv_file):
     # Create the arena
     arena_size = 20
     make_arena(arena_size=arena_size)
+
+    #make_rocks(arena_size=arena_size)
+    mountain_position = (10, 10, 1)  # Adjust as needed
+    mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
+    p.setAdditionalSearchPath('shapes/')
+
+    mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+
+    # works also load in the other ones now! see the prepareshapes
+    mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+
+    # Load the landscape into your PyBullet environment
+    landscape = p.loadURDF("mountain.urdf", useFixedBase=True)
 
    
     # generate a random creature
