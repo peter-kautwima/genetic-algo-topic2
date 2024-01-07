@@ -20,29 +20,57 @@ for csv_file in glob.glob('*.csv'):
     # Calculate some statistics
     fitness = df.sum(axis=1).mean()  # Example: mean of sum of each row
     num_links = df.count(axis=1).mean()  # Example: mean number of non-NA values in each row
-    num_joins = df[0].count()  # Example: number of non-NA values in first column
-    distance_traveled = df[0].sum()  # Example: sum of values in first column
+    vertical_distance = df[0].sum()  # Example: sum of values in first column
 
     # Add the statistics to the DataFrame
     all_data = pd.concat([all_data, pd.DataFrame([{
         'file': csv_file,
         'fitness': fitness,
         'num_links': num_links,
-        'num_joins': num_joins,
-        'distance_traveled': distance_traveled
+        'vertical_distance': vertical_distance
     }])], ignore_index=True)
 
 # Save the DataFrame to a new CSV file
 all_data.to_csv('summary.csv', index=False)
 
-# Plot the data
+# Load the data from the CSV file
+df = pd.read_csv("ga_output.csv")
+
+# Create a new figure for the first graph
+plt.figure()
+
+# Plot the maximum fitness at each generation
+plt.plot(df["iteration"], df["fittest"], label="Max Fitness")
+
+# Plot the average fitness at each generation
+plt.plot(df["iteration"], df["mean"], label="Average Fitness")
+
+# Plot the vertical distance at each generation
+plt.plot(all_data.index, all_data['vertical_distance'], label="Vertical Distance")
+
+# Add a legend
+plt.legend()
+
+# Add labels for the x and y axes
+plt.xlabel("Generation")
+plt.ylabel("Fitness")
+
+# Show the plot
+plt.show()
+
+# Create a new figure for the second graph
 plt.figure(figsize=(10, 6))
 plt.xlabel('Index')  # X-axis label
-plt.ylabel('Fitness')  # Y-axis label
-plt.title('Fitness over time for each CSV file')  # Graph title
+plt.ylabel('Value')  # Y-axis label
+plt.title('Metrics over time for each CSV file')  # Graph title
+
+# Plot the fitness, number of links, and vertical distance
 plt.plot(all_data['fitness'], label='Fitness')
 plt.plot(all_data['num_links'], label='Number of Links')
-plt.plot(all_data['num_joins'], label='Number of Joins')
-plt.plot(all_data['distance_traveled'], label='Distance Traveled')
+plt.plot(all_data['vertical_distance'], label='Vertical Distance')
+
+# Add a legend
 plt.legend()
+
+# Show the plot
 plt.show()
