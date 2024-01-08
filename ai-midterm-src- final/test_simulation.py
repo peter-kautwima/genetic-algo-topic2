@@ -49,4 +49,10 @@ class TestSim(unittest.TestCase):
         print(dists)
         self.assertIsNotNone(dists)
 
+    def TestVerticalDistance (self):
+        sim = simulation.Simulation()
+        cr = creature.Creature(gene_count = 3)
+        sim.run_creature(cr)
+        self.assertNotEqual(cr.start_position[2], cr.last_position[2])
+
 unittest.main()

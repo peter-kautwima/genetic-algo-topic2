@@ -1,5 +1,7 @@
 import pybullet as p
 from multiprocessing import Pool
+import os 
+import sys
 
 class Simulation: 
     def __init__(self, sim_id=0):
@@ -15,14 +17,25 @@ class Simulation:
         plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
         floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
 
+
+        mountain_position_2 = (10, -10, 1)  # Adjust as needed
+        mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
+        p.setAdditionalSearchPath('shapes/')
+        landscape = p.loadURDF('mountain.urdf', useFixedBase=True,  physicsClientId=pid)
+
+        # # works also load in the other ones now! see the prepareshapes
+        mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position_2, mountain_orientation, useFixedBase=1)
+    
+
         xml_file = 'temp' + str(self.sim_id) + '.urdf'
         xml_str = cr.to_xml()
         with open(xml_file, 'w') as f:
             f.write(xml_str)
         
         cid = p.loadURDF(xml_file, physicsClientId=pid)
+        print(f"Loaded URDF with id: {cid}") # debug
 
-        p.resetBasePositionAndOrientation(cid, [0, 0, 2.5], [0, 0, 0, 1], physicsClientId=pid)
+        p.resetBasePositionAndOrientation(cid, [0, -7, 1], [0, 0, 0, 1], physicsClientId=pid) # I updated 
 
 
         for step in range(iterations):
@@ -31,7 +44,7 @@ class Simulation:
                 self.update_motors(cid=cid, cr=cr)
 
             pos, orn = p.getBasePositionAndOrientation(cid, physicsClientId=pid)
-            cr.update_position(pos)
+            cr.update_position(pos)  # Update the creature's position
             #print(pos[2])
             #print(cr.get_distance_travelled())
         

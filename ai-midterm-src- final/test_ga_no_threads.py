@@ -10,6 +10,23 @@ import simulation
 import genome 
 import creature 
 import numpy as np
+import pandas as pd
+
+import sys
+
+# Set a default value for ga_generations
+ga_generations = 1000
+
+# Check if a value was passed as a command-line argument
+if len(sys.argv) > 1:
+    try:
+        # Try to convert the first command-line argument to an integer
+        ga_generations = int(sys.argv[1])
+    except ValueError:
+        # If the conversion fails, print an error message and exit
+        print(f"Error: Expected an integer, got {sys.argv[1]}")
+        sys.exit(1)
+
 
 class TestGA(unittest.TestCase):
     def testBasicGA(self):
@@ -18,19 +35,35 @@ class TestGA(unittest.TestCase):
         #sim = simulation.ThreadedSim(pool_size=1)
         sim = simulation.Simulation()
 
-        for iteration in range(1000):
+        # Initialize an empty list to store the data for each generation
+        data = []
+
+        for iteration in range(ga_generations):
+            # Initialize an empty list to store the total vertical distances travelled
+            total_vertical_distances = []
+            # Initialize an empty list to store the total number of joins
+            total_joins = []
             # this is a non-threaded version 
             # where we just call run_creature instead
             # of eval_population
             for cr in pop.creatures:
-                sim.run_creature(cr, 2400)            
+                sim.run_creature(cr, 2400)     
+                # Append the total vertical distance travelled by the current creature
+                total_vertical_distances.append(cr.get_total_vertical_distance_travelled())
+                # Append the total number of joins made by the current creature
+                total_joins.append(len(cr.get_expanded_links()))
             #sim.eval_population(pop, 2400)
-            fits = [cr.get_distance_travelled() 
-                    for cr in pop.creatures]
+            fits = [cr.get_total_vertical_distance_travelled() for cr in pop.creatures]
             links = [len(cr.get_expanded_links()) 
                     for cr in pop.creatures]
             print(iteration, "fittest:", np.round(np.max(fits), 3), 
-                  "mean:", np.round(np.mean(fits), 3), "mean links", np.round(np.mean(links)), "max links", np.round(np.max(links)))       
+                "mean:", np.round(np.mean(fits), 3), 
+                "mean links:", np.round(np.mean(links)), 
+                "max links:", np.round(np.max(links)), 
+                "mean joins:", np.round(np.mean(total_joins)), 
+                "max joins:", np.round(np.max(total_joins)), 
+                "max vertical distance:", np.round(np.max(total_vertical_distances), 3), 
+                "mean vertical distance:", np.round(np.mean(total_vertical_distances), 3))
             fit_map = population.Population.get_fitness_map(fits)
             new_creatures = []
             for i in range(len(pop.creatures)):
@@ -49,7 +82,7 @@ class TestGA(unittest.TestCase):
             # elitism
             max_fit = np.max(fits)
             for cr in pop.creatures:
-                if cr.get_distance_travelled() == max_fit:
+                if cr.get_total_vertical_distance_travelled() == max_fit:
                     new_cr = creature.Creature(1)
                     new_cr.update_dna(cr.dna)
                     new_creatures[0] = new_cr
@@ -58,6 +91,29 @@ class TestGA(unittest.TestCase):
                     break
             
             pop.creatures = new_creatures
+
+            # Store the data for this generation in a dictionary
+            generation_data = {
+                "Elite CSV": iteration,
+                "fittest": np.round(np.max(fits), 3),
+                "mean": np.round(np.mean(fits), 3),
+                "mean links": np.round(np.mean(links)),
+                "max links": np.round(np.max(links)),
+                "mean joins": np.round(np.mean(total_joins)), 
+                "max joins": np.round(np.max(total_joins)),
+                "max vertical distance": np.round(np.max(total_vertical_distances), 3),
+                "mean vertical distance": np.round(np.mean(total_vertical_distances), 3),
+            }
+    
+            # Add the dictionary to the list
+            data.append(generation_data)
+
+        # Convert the list of dictionaries to a DataFrame
+        df = pd.DataFrame(data)
+
+        # Save the DataFrame to a CSV file
+        df = df.sort_values('fitness', ascending=False)
+        df.to_csv("ga_output.csv", index=False)
                             
         self.assertNotEqual(fits[0], 0)
 
