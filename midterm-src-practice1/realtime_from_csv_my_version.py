@@ -70,12 +70,10 @@ def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
 def main(csv_file, connection_mode):
     assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
 
-    # ... existing code before creating creatures ...
     physicsClient = p.connect(connection_mode)
     p.setPhysicsEngineParameter(enableFileCaching=0)
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
     plane_shape = p.createCollisionShape(p.GEOM_PLANE)
-    floor = p.createMultiBody(plane_shape, plane_shape)
     p.setGravity(0, 0, -10)
 
     # Create the arena
@@ -97,7 +95,7 @@ def main(csv_file, connection_mode):
 
    
     # generate a random creature
-    cr = creature.Creature(gene_count=1)
+    cr = creature.Creature(gene_count=3)
     dna = genome.Genome.from_csv(csv_file)
     cr.update_dna(dna)
     # save it to XML
@@ -112,7 +110,7 @@ def main(csv_file, connection_mode):
     # iterate 
     elapsed_time = 0
     wait_time = 1.0/240 # seconds
-    total_time = 3 # seconds
+    total_time = 30 # seconds
     step = 0
     # dist_moved = 0 wasnt in any other ones. 
     while True:
@@ -130,7 +128,7 @@ def main(csv_file, connection_mode):
                             targetVelocity=vel)
             new_pos, orn = p.getBasePositionAndOrientation(rob1)
             print("new pos", new_pos)
-            # Calcultate distance traveled up a mountain - change vertical height. 
+            # Calcultate distance traveled up a mountain - change to vertical height. 
             dist_moved = np.linalg.norm(np.asarray(start_pos) - np.asarray(new_pos))
             print("dist moved", dist_moved)
         time.sleep(wait_time) # commented out  during offline p.direct
