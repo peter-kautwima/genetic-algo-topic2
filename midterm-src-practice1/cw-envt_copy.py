@@ -105,8 +105,7 @@ def main(csv_file, connection_mode):
         f.write(cr.to_xml())
     # load it into the sim
     rob1 = p.loadURDF('test.urdf')
-    # air drop it
-    p.resetBasePositionAndOrientation(rob1, [0, -7, 1], [0, 0, 0, 1])  # I changed this 
+
     start_pos, orn = p.getBasePositionAndOrientation(rob1)
 
     # iterate 
