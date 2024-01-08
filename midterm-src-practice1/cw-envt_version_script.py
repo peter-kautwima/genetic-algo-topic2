@@ -13,8 +13,8 @@ import pybullet as p
 import math
 
 import pybullet as p
+import genome
 from ga_script_optimise_evolution import main as get_best_csv
-
 
 
 def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5):
@@ -85,14 +85,11 @@ p.setAdditionalSearchPath('shapes/')
 
 mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
-# Get the best CSV file from ga_script_optimise_evolution.py
-best_csv_file = get_best_csv()
-
-# Generate a creature
-cr = creature.Creature(gene_count=1)
-
+# generate a random creature
+cr = creature.Creature(gene_count=3)
 # Load the DNA from the best CSV file
-dna = genome.Genome.from_csv(best_csv_file)
+# dna = genome.Genome.from_csv('elite_49.csv')
+dna = genome.Genome.from_csv('elite_49.csv')
 
 # Update the creature's DNA
 cr.update_dna(dna)
