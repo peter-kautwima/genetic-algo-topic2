@@ -39,6 +39,8 @@ def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5
         """Return the height of the mountain at position (x, y) using a Gaussian function."""
         return mountain_height * math.exp(-((x**2 + y**2) / (2 * sigma**2)))
 
+        print( "Mountaine Height", mountain_height)
+
     for _ in range(num_rocks):
         x = random.uniform(-1 * arena_size/2, arena_size/2)
         y = random.uniform(-1 * arena_size/2, arena_size/2)
@@ -104,13 +106,13 @@ def main(csv_file, connection_mode):
     # load it into the sim
     rob1 = p.loadURDF('test.urdf')
     # air drop it
-    p.resetBasePositionAndOrientation(rob1, [-7, -7, 1], [0, 0, 0, 1])
+    p.resetBasePositionAndOrientation(rob1, [-7, -7, 1], [0, 0, 0, 1])  # I changed this 
     start_pos, orn = p.getBasePositionAndOrientation(rob1)
 
     # iterate 
     elapsed_time = 0
     wait_time = 1.0/240 # seconds
-    total_time = 30 # seconds
+    total_time = 3 # seconds
     step = 0
     dist_moved = 0
     while True:
@@ -127,10 +129,10 @@ def main(csv_file, connection_mode):
                             controlMode=mode, 
                             targetVelocity=vel)
             new_pos, orn = p.getBasePositionAndOrientation(rob1)
-            print(new_pos)
+            print("new pos", new_pos)
             # Calcultate distance traveled up a mountain - change vertical height. 
             dist_moved = np.linalg.norm(np.asarray(start_pos) - np.asarray(new_pos))
-            print(dist_moved)
+            print("dist moved", dist_moved)
         time.sleep(wait_time)
         elapsed_time += wait_time
         if elapsed_time > total_time:
@@ -143,4 +145,4 @@ def main(csv_file, connection_mode):
 
 if __name__ == "__main__":
     assert len(sys.argv) == 2, "Usage: python playback_test.py csv_filename"
-    main(sys.argv[1], p.GUI)  # Use GUI mode
+    main(sys.argv[1], p.GUI)  # Use GUI mode I added 

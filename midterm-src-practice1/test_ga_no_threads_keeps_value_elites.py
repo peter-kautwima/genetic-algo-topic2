@@ -15,7 +15,7 @@ import pandas as pd
 import sys
 
 # Set a default value for ga_generations
-ga_generations = 50
+ga_generations = 5
 
 # Check if a value was passed as a command-line argument
 if len(sys.argv) > 1:
