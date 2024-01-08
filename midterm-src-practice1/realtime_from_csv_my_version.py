@@ -53,9 +53,6 @@ def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5
         rock_visual = p.createVisualShape(p.GEOM_BOX, halfExtents=[size, size, size], rgbaColor=[0.5, 0.5, 0.5, 1])
         rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
 
-
-
-
 def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
     for _ in range(num_rocks):
         x = random.uniform(-1 * arena_size/2, arena_size/2)
@@ -113,7 +110,7 @@ def main(csv_file, connection_mode):
     # iterate 
     elapsed_time = 0
     wait_time = 1.0/240 # seconds
-    total_time = 2 # seconds
+    total_time = 30 # seconds
     step = 0
     dist_moved = 0
     while True:
@@ -130,7 +127,8 @@ def main(csv_file, connection_mode):
                             controlMode=mode, 
                             targetVelocity=vel)
             new_pos, orn = p.getBasePositionAndOrientation(rob1)
-            #print(new_pos)
+            print(new_pos)
+            # Calcultate distance traveled up a mountain - change vertical height. 
             dist_moved = np.linalg.norm(np.asarray(start_pos) - np.asarray(new_pos))
             print(dist_moved)
         time.sleep(wait_time)
@@ -139,8 +137,8 @@ def main(csv_file, connection_mode):
             break
 
     print("TOTAL DISTANCE MOVED:", dist_moved)
-    p.disconnect()
-    return dist_moved  # Add this line
+    p.disconnect() # I added this line
+    return dist_moved  # I added Add this line
 
 
 if __name__ == "__main__":
