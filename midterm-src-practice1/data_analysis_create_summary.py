@@ -1,6 +1,14 @@
 import pandas as pd
 import glob
 import matplotlib.pyplot as plt
+import os
+
+# Check if ga_output.csv exists
+if not os.path.exists('ga_output.csv'):
+    # If it doesn't exist, create a DataFrame with the necessary columns
+    df = pd.DataFrame(columns=["iteration", "fittest", "mean"])
+    # Save the DataFrame to ga_output.csv
+    df.to_csv('ga_output.csv', index=False)
 
 # Create an empty DataFrame to store all data
 all_data = pd.DataFrame()
@@ -18,9 +26,9 @@ for csv_file in sorted(glob.glob('*.csv')):
     df = df.apply(pd.to_numeric, errors='coerce')
 
     # Calculate some statistics
-    fitness = df.sum(axis=1).mean()  # Example: mean of sum of each row
-    num_links = df.count(axis=1).mean()  # Example: mean number of non-NA values in each row
-    vertical_distance = df[0].sum()  # Example: sum of values in first column
+    fitness = df.sum(axis=1).mean()   
+    num_links = df.count(axis=1).mean()  
+    vertical_distance = df[0].sum()   
 
     # Add the statistics to the DataFrame
     all_data = pd.concat([all_data, pd.DataFrame([{

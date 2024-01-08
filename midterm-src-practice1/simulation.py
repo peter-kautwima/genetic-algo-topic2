@@ -14,6 +14,10 @@ class Simulation:
         p.setPhysicsEngineParameter(enableFileCaching=0, physicsClientId=pid)
 
         p.setGravity(0, 0, -10, physicsClientId=pid)
+        plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
+        floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
+
+
         mountain_position_2 = (10, -10, 1)  # Adjust as needed
         mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
         p.setAdditionalSearchPath('shapes/')
@@ -21,8 +25,7 @@ class Simulation:
 
         # # works also load in the other ones now! see the prepareshapes
         mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position_2, mountain_orientation, useFixedBase=1)
-        plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
-        floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
+    
 
         xml_file = 'temp' + str(self.sim_id) + '.urdf'
         xml_str = cr.to_xml()
@@ -30,6 +33,7 @@ class Simulation:
             f.write(xml_str)
         
         cid = p.loadURDF(xml_file, physicsClientId=pid)
+        print(f"Loaded URDF with id: {cid}") # debug
 
         p.resetBasePositionAndOrientation(cid, [0, -7, 1], [0, 0, 0, 1], physicsClientId=pid) # I updated 
 
@@ -41,6 +45,8 @@ class Simulation:
 
             pos, orn = p.getBasePositionAndOrientation(cid, physicsClientId=pid)
             cr.update_position(pos)  # Update the creature's position
+            #print(pos[2])
+            #print(cr.get_distance_travelled())
         
     
     def update_motors(self, cid, cr):

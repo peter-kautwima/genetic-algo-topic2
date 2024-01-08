@@ -57,7 +57,13 @@ class TestGA(unittest.TestCase):
             links = [len(cr.get_expanded_links()) 
                     for cr in pop.creatures]
             print(iteration, "fittest:", np.round(np.max(fits), 3), 
-                  "mean:", np.round(np.mean(fits), 3), "mean links", np.round(np.mean(links)), "max links", np.round(np.max(links)))       
+                "mean:", np.round(np.mean(fits), 3), 
+                "mean links:", np.round(np.mean(links)), 
+                "max links:", np.round(np.max(links)), 
+                "mean joins:", np.round(np.mean(total_joins)), 
+                "max joins:", np.round(np.max(total_joins)), 
+                "max vertical distance:", np.round(np.max(total_vertical_distances), 3), 
+                "mean vertical distance:", np.round(np.mean(total_vertical_distances), 3))
             fit_map = population.Population.get_fitness_map(fits)
             new_creatures = []
             for i in range(len(pop.creatures)):
@@ -106,6 +112,7 @@ class TestGA(unittest.TestCase):
         df = pd.DataFrame(data)
 
         # Save the DataFrame to a CSV file
+        df = df.sort_values('fitness', ascending=False)
         df.to_csv("ga_output.csv", index=False)
                             
         self.assertNotEqual(fits[0], 0)
