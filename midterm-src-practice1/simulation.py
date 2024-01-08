@@ -12,6 +12,7 @@ class Simulation:
         p.setPhysicsEngineParameter(enableFileCaching=0, physicsClientId=pid)
 
         p.setGravity(0, 0, -10, physicsClientId=pid)
+        landscape = p.loadURDF("landscape.urdf", useFixedBase=True)
         plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
         floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
 
@@ -22,7 +23,7 @@ class Simulation:
         
         cid = p.loadURDF(xml_file, physicsClientId=pid)
 
-        p.resetBasePositionAndOrientation(cid, [0, 0, 1], [0, 0, 0, 1], physicsClientId=pid) # I updated 
+        p.resetBasePositionAndOrientation(cid, [-7, -7, 1], [0, 0, 0, 1], physicsClientId=pid) # I updated 
 
 
         for step in range(iterations):

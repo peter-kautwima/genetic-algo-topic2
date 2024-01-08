@@ -34,7 +34,7 @@ def make_arena(arena_size=10, wall_height=1):
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[arena_size/2, 0, wall_height/2])
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[-arena_size/2, 0, wall_height/2])
 
-def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5):
+def make_mountain(num_rocks=100, max_size=0.25, arena_size=5, mountain_height=5):
     def gaussian(x, y, sigma=arena_size/4):
         """Return the height of the mountain at position (x, y) using a Gaussian function."""
         return mountain_height * math.exp(-((x**2 + y**2) / (2 * sigma**2)))
@@ -55,7 +55,7 @@ def make_mountain(num_rocks=100, max_size=0.25, arena_size=10, mountain_height=5
         rock_visual = p.createVisualShape(p.GEOM_BOX, halfExtents=[size, size, size], rgbaColor=[0.5, 0.5, 0.5, 1])
         rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
 
-def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
+def make_rocks(num_rocks=100, max_size=0.25, arena_size=5):
     for _ in range(num_rocks):
         x = random.uniform(-1 * arena_size/2, arena_size/2)
         y = random.uniform(-1 * arena_size/2, arena_size/2)
@@ -66,7 +66,6 @@ def make_rocks(num_rocks=100, max_size=0.25, arena_size=10):
         rock_visual = p.createVisualShape(p.GEOM_BOX, halfExtents=[size, size, size], rgbaColor=[0.5, 0.5, 0.5, 1])
         rock_body = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=rock_shape, baseVisualShapeIndex=rock_visual, basePosition=[x, y, z], baseOrientation=orientation)
 
-
 def main(csv_file, connection_mode):
     assert os.path.exists(csv_file), "Tried to load " + csv_file + " but it does not exists"
 
@@ -74,6 +73,7 @@ def main(csv_file, connection_mode):
     p.setPhysicsEngineParameter(enableFileCaching=0)
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
     plane_shape = p.createCollisionShape(p.GEOM_PLANE)
+
     p.setGravity(0, 0, -10)
 
     # Create the arena
@@ -81,17 +81,21 @@ def main(csv_file, connection_mode):
     make_arena(arena_size=arena_size)
 
     #make_rocks(arena_size=arena_size)
-    mountain_position = (10, 10, 1)  # Adjust as needed
+    mountain_position = (7, 7, 1)  # Adjust as needed
+    mountain_position_2 = (10, -10, 1)  # Adjust as needed
     mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
     p.setAdditionalSearchPath('shapes/')
 
     mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
-    # works also load in the other ones now! see the prepareshapes
-    mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+    # # works also load in the other ones now! see the prepareshapes
+    mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position_2, mountain_orientation, useFixedBase=1)
 
-    # Load the landscape into your PyBullet environment
-    landscape = p.loadURDF("mountain.urdf", useFixedBase=True)
+    make_rocks(arena_size=arena_size)
+
+    # Load the landscape into PyBullet environment
+    landscape = p.loadURDF("landscape.urdf", useFixedBase=True)
+
 
    
     # generate a random creature

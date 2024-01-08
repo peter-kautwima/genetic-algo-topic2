@@ -412,7 +412,7 @@ make_rocky_moutain('./shapes/mountain_with_cubes.obj')
 
 
 
-# new as well
+# My Shapes
 
 # Generate a landscape with a height range of 2 to 6 and sigma range of 3 to 7
 generate_landscape("./shapes/landscape1.obj", height_range=(2, 6), sigma_range=(3, 7))
