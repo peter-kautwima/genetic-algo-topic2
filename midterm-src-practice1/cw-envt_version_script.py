@@ -8,6 +8,13 @@ import creature
 p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
+
+p.setPhysicsEngineParameter(enableFileCaching=0)
+p.configureDebugVisualizer(p.COV_ENABLE_GUI, 1)
+plane_shape = p.createCollisionShape(p.GEOM_PLANE)
+
+
+
 import random
 import pybullet as p
 import math
@@ -88,8 +95,7 @@ mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orien
 # generate a random creature
 cr = creature.Creature(gene_count=3)
 # Load the DNA from the best CSV file
-# dna = genome.Genome.from_csv('elite_49.csv')
-dna = genome.Genome.from_csv('elite_49.csv')
+dna = genome.Genome.from_csv('elite_0.csv')
 
 # Update the creature's DNA
 cr.update_dna(dna)
@@ -97,7 +103,7 @@ cr.update_dna(dna)
 with open('test.urdf', 'w') as f:
     f.write(cr.to_xml())
 # load it into the sim
-rob1 = p.loadURDF('test.urdf', (7, 7, 1))
+rob1 = p.loadURDF('test.urdf', (-7, -7, 0.5))
 
 
 p.setRealTimeSimulation(1)
