@@ -91,10 +91,8 @@ def main(csv_file, connection_mode):
     # # works also load in the other ones now! see the prepareshapes
     mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position_2, mountain_orientation, useFixedBase=1)
 
-    make_rocks(arena_size=arena_size)
-
     # Load the landscape into PyBullet environment
-    landscape = p.loadURDF("landscape.urdf", useFixedBase=True)
+    # landscape = p.loadURDF("mountain.urdf", useFixedBase=True)
 
 
    
@@ -108,7 +106,7 @@ def main(csv_file, connection_mode):
     # load it into the sim
     rob1 = p.loadURDF('test.urdf')
     # air drop it
-    p.resetBasePositionAndOrientation(rob1, [-7, -7, 1], [0, 0, 0, 1])  # I changed this 
+    p.resetBasePositionAndOrientation(rob1, [0, -7, 1], [0, 0, 0, 1])  # I changed this 
     start_pos, orn = p.getBasePositionAndOrientation(rob1)
 
     # iterate 
@@ -141,7 +139,7 @@ def main(csv_file, connection_mode):
             break
 
     print("TOTAL DISTANCE MOVED:", dist_moved)
-    p.disconnect() # I added this line
+    # p.disconnect() # I added this line
     return dist_moved  # I added Add this line
 
 

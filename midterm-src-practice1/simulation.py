@@ -1,5 +1,7 @@
 import pybullet as p
 from multiprocessing import Pool
+import os 
+import sys
 
 class Simulation: 
     def __init__(self, sim_id=0):
@@ -12,7 +14,13 @@ class Simulation:
         p.setPhysicsEngineParameter(enableFileCaching=0, physicsClientId=pid)
 
         p.setGravity(0, 0, -10, physicsClientId=pid)
-        landscape = p.loadURDF("landscape.urdf", useFixedBase=True)
+        mountain_position_2 = (10, -10, 1)  # Adjust as needed
+        mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
+        p.setAdditionalSearchPath('shapes/')
+        landscape = p.loadURDF('mountain.urdf', useFixedBase=True,  physicsClientId=pid)
+
+        # # works also load in the other ones now! see the prepareshapes
+        mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position_2, mountain_orientation, useFixedBase=1)
         plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
         floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
 
@@ -23,7 +31,7 @@ class Simulation:
         
         cid = p.loadURDF(xml_file, physicsClientId=pid)
 
-        p.resetBasePositionAndOrientation(cid, [-7, -7, 1], [0, 0, 0, 1], physicsClientId=pid) # I updated 
+        p.resetBasePositionAndOrientation(cid, [0, -7, 1], [0, 0, 0, 1], physicsClientId=pid) # I updated 
 
 
         for step in range(iterations):
