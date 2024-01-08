@@ -22,7 +22,7 @@ class Simulation:
         
         cid = p.loadURDF(xml_file, physicsClientId=pid)
 
-        p.resetBasePositionAndOrientation(cid, [0, 0, 2.5], [0, 0, 0, 1], physicsClientId=pid)
+        p.resetBasePositionAndOrientation(cid, [0, 0, 1], [0, 0, 0, 1], physicsClientId=pid) # I updated 
 
 
         for step in range(iterations):

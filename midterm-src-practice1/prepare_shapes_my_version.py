@@ -395,7 +395,7 @@ def generate_gaussian_pyramid4(filename, size=10, resolution=0.5, sigma=3, heigh
 # Generate the OBJ file
 generate_gaussian_pyramid4("./shapes/gaussian_pyramid.obj")
 
-
+# Below code was uncommented - I commented it out to test the new functions
 # Generate the OBJ file
 generate_gaussian_pyramid3("./shapes/gaussian_pyramid.obj")
 

@@ -114,7 +114,7 @@ def main(csv_file, connection_mode):
     wait_time = 1.0/240 # seconds
     total_time = 3 # seconds
     step = 0
-    dist_moved = 0
+    # dist_moved = 0 wasnt in any other ones. 
     while True:
         p.stepSimulation()
         step += 1
@@ -133,7 +133,7 @@ def main(csv_file, connection_mode):
             # Calcultate distance traveled up a mountain - change vertical height. 
             dist_moved = np.linalg.norm(np.asarray(start_pos) - np.asarray(new_pos))
             print("dist moved", dist_moved)
-        time.sleep(wait_time)
+        time.sleep(wait_time) # commented out  during offline p.direct
         elapsed_time += wait_time
         if elapsed_time > total_time:
             break
